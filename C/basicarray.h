@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define gettype(x) _Generic((x),char: 0, \
                                 signed char: 1, \
