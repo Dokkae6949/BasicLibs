@@ -2,9 +2,9 @@
 #define __BASICARRAY_H__
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <math.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define gettype(x) _Generic((x),char: 0, \
                                 signed char: 1, \
@@ -121,7 +121,7 @@ FILL_ARRAY_RAND(double, x)
       shiftAmount = shiftAmount >= 0 ? shiftAmount : arraySize + shiftAmount; \
       type tmp[arraySize]; \
       for (size_t i = 0; i < arraySize; i++) \
-         tmp[abs((i + shiftAmount) % arraySize)] = array[i]; \
+         tmp[abs((int)((i + shiftAmount) % arraySize))] = array[i]; \
       memcpy(array, tmp, sizeof(type) * arraySize); \
    }
 SHIFT_ARRAY(char, x)
@@ -137,11 +137,12 @@ SHIFT_ARRAY(double, x)
    void printArray_##type(const size_t arraySize, type* array, size_t elementsPerRow, const char* prefixSepperator, const char* suffixSepperator, size_t decimals) \
    { \
       decimals = decimals == 0 ? 0 : decimals > 10 ? 11 : decimals + 1; \
+      decimals = gettype(*array) < 11 ? 11 : decimals; \
       for (size_t i = 0; i < arraySize; i++) \
       { \
          printf("%s", prefixSepperator); \
          printf(printtype(*array), array[i]); \
-         if (gettype(*array) >= 11) for (size_t i = 0; i < 11-decimals; i++) printf("\b \b"); \
+         for (size_t i = 0; i < 11-decimals; i++) printf("\b \b"); \
          if ((i+1) % elementsPerRow == 0) printf("\n"); \
          else if (i == arraySize-1) printf("\n"); \
          else printf("%s", suffixSepperator); \
