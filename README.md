@@ -1,5 +1,8 @@
 # Basic Libs
- Basically basic libs... <br /> <br /> <br />
+ I created this library because I wanted to have a place where I can and will store every <br /> 
+ library I will every make (at least in my school carrer :] ) <br /> 
+ But I hope that some of you may find some usefull stuff in my spaghetti code. <br /><br /><br />
+ Thats it and have fun<br /><br /><br /><br /><br /><br />
 ## > Currect Libs
 #### BasicArray.h
 - Creating, Resizing, Filling and outputting arrays
