@@ -1,5 +1,5 @@
-#ifndef __BASICARRAY_H__
-#define __BASICARRAY_H__
+#ifndef BASICARRAY_H
+#define BASICARRAY_H
 
 #include <stdio.h>
 #include <math.h>
