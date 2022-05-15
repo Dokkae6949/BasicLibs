@@ -1,13 +1,12 @@
 # ...Basic Libs
-### _Basically basic libs..._
-#
-#
-#
+### _Basically basic libs... <br /> <br /> <br />
 ## > Currect Libs
-### BasicArray.h
+#### BasicArray.h
 - Creating, Resizing, Filling and outputting arrays
 #### BasicRand.h
 - Generating random value in range
+#### BasicList.h
+- Implementation of linked lists
 
 ## > Installation
 
