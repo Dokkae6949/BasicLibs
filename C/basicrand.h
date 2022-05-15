@@ -1,5 +1,5 @@
-#ifndef __BASICRAND_H__
-#define __BASICRAND_H__
+#ifndef BASICRAND_H
+#define BASICRAND_H
 
 #include <stdlib.h>
 
