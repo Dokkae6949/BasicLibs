@@ -134,18 +134,18 @@ SHIFT_ARRAY(double, x)
 
 // Prints array based on elements per row the sepperator and the amount of decimals(only for floating points)
 #define PRINT_ARRAY(type, field) \
-   void printArray_##type(const size_t arraySize, type* array, size_t elementsPerRow, const char* prefixSepperator, const char* suffixSepperator, size_t decimals) \
+   void printArray_##type(const size_t arraySize, type* array, size_t elementsPerRow, const char* prefixSeperator, const char* suffixSeperator, size_t decimals) \
    { \
       decimals = decimals == 0 ? 0 : decimals > 10 ? 11 : decimals + 1; \
       decimals = gettype(*array) < 11 ? 11 : decimals; \
       for (size_t i = 0; i < arraySize; i++) \
       { \
-         printf("%s", prefixSepperator); \
+         printf("%s", prefixSeperator); \
          printf(printtype(*array), array[i]); \
          for (size_t i = 0; i < 11-decimals; i++) printf("\b \b"); \
          if ((i+1) % elementsPerRow == 0) printf("\n"); \
          else if (i == arraySize-1) printf("\n"); \
-         else printf("%s", suffixSepperator); \
+         else printf("%s", suffixSeperator); \
       } \
    }
 PRINT_ARRAY(char, x)
