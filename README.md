@@ -1,5 +1,5 @@
-# ...Basic Libs
-### _Basically basic libs... <br /> <br /> <br />
+# Basic Libs
+ Basically basic libs... <br /> <br /> <br />
 ## > Currect Libs
 #### BasicArray.h
 - Creating, Resizing, Filling and outputting arrays
