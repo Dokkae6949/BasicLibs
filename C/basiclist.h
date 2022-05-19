@@ -3,110 +3,156 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#pragma region Struct definitions
-#define LST_INTERNAL__NODE(name, dataType) \
-    typedef struct Node_##name \
-    { \
-        int key; \
-        dataType data; \
-        struct Node_##name *next; \
-    }Node_##name; 
+//
+//  [HEAD] -> [NODE] -> [NODE] -> [NODE] -> [NODE] -> [NULL] 
+//
 
-#define LST_INTERNAL__LIST(name, nodeType) \
-    typedef struct List_##name \
-    { \
-        nodeType *head; \
-    }List_##name;
-#pragma endregion Struct definitions
+typedef struct Lst_Node 
+{ 
+    int key;
+    void *data;
+    size_t dataSize;
+    struct Lst_Node *next;
+}Lst_Node; 
 
-#pragma region LST_INTERNAL definitions
-// Adds node to the very front of the list
-#define LST_INTERNAL__LST_ADD_NODE(listType, nodeType, dataType) \
-    void lst_AddNode_##listType(listType *list, int newKey, nodeType node) \
-    { \
-        nodeType *newNode = (nodeType*) malloc(sizeof(nodeType)); \
-        if (newNode == NULL) return; \
-        newNode->key = newKey; \
-        newNode->data = node.data; \
-        newNode->next = list->head; \
-        list->head = newNode; \
+typedef struct Lst_List
+{
+    Lst_Node *head;
+    Lst_Node *tail;
+}Lst_List;
+
+
+size_t lst_GetNodeSize(const size_t dataSize)
+{
+    return sizeof(Lst_Node) - sizeof(dataSize) + dataSize;
+}
+
+void lst_PrependNewNode(Lst_List *list, const int key, void *data, const size_t dataSize, Lst_Node *nextNode)
+{
+    if (list == NULL) return;
+
+    Lst_Node *newNode = (Lst_Node*) malloc(lst_GetNodeSize(dataSize));
+
+    if (newNode == NULL) return;
+
+    newNode->key = key;
+    newNode->data = malloc(dataSize);
+    newNode->dataSize = dataSize;
+    newNode->next = nextNode;
+
+    for(int i=0; i < dataSize; i++)
+        *(char *)(newNode->data + i) = *(char *)(data + i);
+
+    if (list->tail == NULL) 
+        list->tail = newNode;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+void lst_AppendNewNode(Lst_List *list, const int key, void *data, const size_t dataSize, Lst_Node *nextNode)
+{
+    if (list == NULL) return;
+
+    Lst_Node *newNode = (Lst_Node*) malloc(lst_GetNodeSize(dataSize));
+
+    if (newNode == NULL) return;
+    
+    newNode->key = key;
+    newNode->data = malloc(dataSize);
+    newNode->dataSize = dataSize;
+    newNode->next = nextNode;
+
+    for(int i=0; i < dataSize; i++)
+        *(char *)(newNode->data + i) = *(char *)(data + i);
+
+    if (list->head == NULL)
+        list->head = newNode;
+    if (list->tail != NULL)
+        list->tail->next = newNode;
+    list->tail = newNode;
+}
+
+Lst_Node* lst_GetNode(const Lst_List *list, const int key) 
+{ 
+    if (list->head == NULL) return NULL;
+
+    Lst_Node *currentNode = list->head;
+
+    while (currentNode->key != key)
+    {
+        if (currentNode->next == NULL) return NULL;
+        
+        currentNode = currentNode->next;
     }
 
-// Tries to remove node with given key from list and frees memory location
-#define LST_INTERNAL__LST_DESTROY_NODE(listType, nodeType) \
-    void lst_DestroyNode_##listType(listType *list, int key) \
-    { \
-        if (list->head == NULL) return; \
-        nodeType *currentNode = list->head; \
-        nodeType *lastNode = NULL; \
-        while (currentNode->key != key) \
-        { \
-            if (currentNode->next == NULL) return; \
-            lastNode = currentNode; \
-            currentNode = currentNode->next; \
-        } \
-        if (currentNode == list->head) \
-            list->head = list->head->next; \
-        else \
-            lastNode->next = currentNode->next; \
-        free(currentNode); \
+    return currentNode; 
+}
+
+void lst_FreeNode(Lst_Node *node)
+{
+    if (node == NULL) return;
+
+    free(node->data);
+    free(node);
+}
+
+void lst_FreeList(Lst_List *list)
+{
+    Lst_Node *currentNode = list->head;
+    Lst_Node *lastNode = NULL;
+
+    while (currentNode != NULL)
+    {
+        lastNode = currentNode;
+        currentNode = currentNode->next;
+
+        lst_FreeNode(lastNode);
+    }    
+    
+    list->head = NULL;
+    list->tail = NULL;
+}
+
+void lst_DestroyNode(Lst_List *list, const int key) 
+{ 
+    if (list->head == NULL) return;
+
+    Lst_Node *currentNode = list->head;
+    Lst_Node *lastNode = NULL;
+
+    while (currentNode->key != key)
+    {
+        if (currentNode->next == NULL) return;
+        lastNode = currentNode;
+        currentNode = currentNode->next;
     }
 
-// Tries to find a node given the key of it and returns a pointer to it
-#define LST_INTERNAL__LST_GET_NODE(listType, nodeType) \
-    nodeType* lst_GetNode_##listType(listType *list, int key) \
-    { \
-        if (list->head == NULL) return NULL; \
-        nodeType *currentNode = list->head; \
-        while (currentNode->key != key)\
-        { \
-            if (currentNode->next == NULL) return NULL; \
-            currentNode = currentNode->next; \
-        } \
-        return currentNode; \
+    if (currentNode == list->head)
+        list->head = list->head->next;
+    else if (currentNode == list->tail)
+    {
+        list->tail = lastNode;
+        lastNode->next = NULL; 
     }
+    else
+        lastNode->next = currentNode->next;
 
-// Returns the lenght of the list
-#define LST_INTERNAL__LST_GET_LENGHT(listType) \
-    size_t lst_GetLenght_##listType(listType *list) \
-    { \
-        size_t length = 0; \
-        typeof(list->head) currentNode = list->head; \
-        while (currentNode != NULL) \
-        { \
-            length++; \
-            currentNode = currentNode->next; \
-        } \
-        return length; \
+    lst_FreeNode(currentNode);
+}
+
+size_t lst_GetListLength(Lst_List *list) 
+{ 
+    size_t length = 0;
+    typeof(list->head) currentNode = list->head;
+
+    while (currentNode != NULL)
+    {
+        length++; 
+        currentNode = currentNode->next; 
     }
-#pragma endregion LST_INTERNAL definitions
-
-
-// #################################################
-// #################################################
-
-
-// Creates and sets up every function for a new list type
-#define LIST_SETUP(name, dataType) \
-    LST_INTERNAL__NODE(name, dataType) \
-    LST_INTERNAL__LIST(name, Node_##name) \
-    LST_INTERNAL__LST_ADD_NODE(List_##name, Node_##name, Monte) \
-    LST_INTERNAL__LST_DESTROY_NODE(List_##name, Node_##name) \
-    LST_INTERNAL__LST_GET_NODE(List_##name, Node_##name) \
-    LST_INTERNAL__LST_GET_LENGHT(List_##name)
-
-
-// ############################
-// #### DEFAULT LIST TYPES ####
-// ############################
-
-LIST_SETUP(Char, char)
-LIST_SETUP(Short, short)
-LIST_SETUP(Int, int)
-LIST_SETUP(Unsigned, unsigned)
-LIST_SETUP(Long, long)
-LIST_SETUP(Float, float)
-LIST_SETUP(Double, double)
+    return length;
+}
 
 #endif
