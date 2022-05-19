@@ -8,6 +8,44 @@
 //
 //  [HEAD] -> [NODE] -> [NODE] -> [NODE] -> [NODE] -> [NULL] 
 //
+/* EXAMPLE CODE
+===============
+
+#include "basiclist.h"
+
+typedef struct Data
+{
+    int x;
+    int y;
+}Data;
+
+int main()
+{
+    // Initializing new list
+    Lst_List list = {NULL, NULL} 
+    
+    // Creating data
+    Data data = {17, 16};
+    // Linking data || List, Key, Data, DataSize,     NextNode
+    lst_AppendNewNode(&list, 0,  &data, sizeof(data), NULL);
+    
+    // Find node ||               List, Key
+    Lst_Node *node = lst_GetNode(&list, 0);
+    // Make sure node has been found
+    if (node != NULL)
+    {
+        // Cast void* back to Data* and print
+        Data data = *(Data*) node->data;
+        printf("%d - %d\n", data.x, data.y);
+    }
+    
+    return 0;
+}
+=======>
+OUTPUT:
+ 17 - 16
+===============
+*/
 
 typedef struct Lst_Node 
 { 
