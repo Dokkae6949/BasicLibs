@@ -39,6 +39,10 @@ int main()
         printf("%d - %d\n", data.x, data.y);
     }
     
+    // Destroys all the nodes and frees them
+    // (Lst_)List itself will not be destroyed and can be used again
+    lst_FreeList(&list);
+    
     return 0;
 }
 =======>
