@@ -1,3 +1,7 @@
+
+//  Compile With: gcc -o example example.c besiclist.c -Wall#
+// Run With: ./example
+
 #include <stdio.h>
 #include "basiclist.h"
 
