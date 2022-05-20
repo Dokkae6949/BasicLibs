@@ -3,7 +3,7 @@
 
 size_t lst_GetNodeSize(const size_t dataSize)
 {
-    return sizeof(Lst_Node) - sizeof(dataSize) + dataSize;
+    return sizeof(Lst_Node) + dataSize;
 }
 
 void lst_PrependNewNode(Lst_List *list, const int key, void *data, const size_t dataSize, Lst_Node *nextNode)
