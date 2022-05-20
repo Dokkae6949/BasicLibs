@@ -17,6 +17,9 @@
 ```c
 // Just download and include the wanted header files like so
 #include "headername.h"
+
+// Then compile your main files together with the lib source fil if given
+gcc -o YourFile.out YourFile.c LibFile.c -Wall
 ```
 
 ## License
